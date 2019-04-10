@@ -103,7 +103,25 @@ void Govers_a2AudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     // initialisation that you need..
     currentSampleRate = sampleRate;
     sinFreq = 60.0f;
+    
     updateAngleDelta();
+    
+    // initiate mixLevel
+    mixLevel.reset(sampleRate, 0.1f);
+    mixLevel.setTargetValue(0.25f);
+    
+    freqLevel.reset(sampleRate, 0.01f);
+    freqLevel.setTargetValue(0.0);
+    
+    // setting gain to call later, in decibels
+    gain.setGainDecibels(12.0f);
+    
+    String message;
+    message << "Preparing to play..." << newLine;
+    message << "My sample rate is" << currentSampleRate << newLine;
+    message << "Buffer size is" << samplesPerBlock << newLine;
+    Logger::getCurrentLogger()->writeToLog(message);
+    
 }
 
 void Govers_a2AudioProcessor::releaseResources()
@@ -152,7 +170,8 @@ void Govers_a2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    AudioBuffer<float> wetBuffer;
+    AudioBuffer<float> wetBuffer(getTotalNumInputChannels(), buffer.getNumSamples());
+    wetBuffer.makeCopyOf(buffer);
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
     // Make sure to reset the state if your inner loop is processing
@@ -176,6 +195,9 @@ void Govers_a2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
             // generating a set of random values to modulate input amplitude - NOT USED
             // float modulator = random.nextFloat() * 0.25f - 0.125f;
             // wetData[sample] = wetData[sample] * modulator
+            
+            sinFreq = freqLevel.getNextValue();
+            updateAngleDelta();
             
             // This part is the ring mod where it is incorporating the Sin set to 60.0f at the top of the code
             auto currentSinSample = (float) std::sin(currentAngle);
@@ -211,15 +233,26 @@ void Govers_a2AudioProcessor::processBlock (AudioBuffer<float>& buffer, MidiBuff
             wetData[sample] = shapedSample;
             
             // Here is the wet/dry mix, set to 40% dry + 60% wet
-            channelData[sample] = channelData[sample] * 0.4f + wetData[sample] * 0.6f;
+            //channelData[sample] = channelData[sample] * 0.4f + wetData[sample] * 0.6f;
             
-            // Finally, here is a gain control. It wasn't clipping in DAW without this, but added to provide a bit more headroom and for easy volume manipulation rather than chaging mix above
-            channelData[sample] = channelData[sample] * 0.9f;
+           
+            
+            
+            // implementing slider control
+            channelData[sample] = channelData[sample] * (1.0f - (mixLevel.getNextValue()*0.01f)) + ((wetData[sample] * mixLevel.getNextValue()) * 0.01f);
+            
+            // lowering final gain
+            channelData[sample] = channelData[sample] * 0.4f;
+            
+            // Finally, here is a gain control. It wasn't clipping in DAW without this, but added to provide a bit more headroom and for easy volume manipulation rather than chaging mix above NOT USED
+            //channelData[sample] = channelData[sample] * 0.9f;
             
             // I like this when used with a synth sample, especially if it has a low and a high synth
             // They really contrast nicely with the hard-clip and overall sound pretty gnarly and demented almost
         }
     }
+    dsp::AudioBlock<float> output(buffer);
+    gain.process(dsp::ProcessContextReplacing<float>(output));
 }
 
 //==============================================================================
@@ -255,7 +288,7 @@ void Govers_a2AudioProcessor::updateAngleDelta()
     // calculate no. of cycles that will need to complete for each output sample
     auto cyclesPerSample = sinFreq / currentSampleRate;
     // multiply by the length of a whole sin wave cycle
-    angleDelta = cyclesPerSample * 2.0f * MathConstants<float>::twoPi;
+    angleDelta = cyclesPerSample * MathConstants<float>::twoPi;
 }
 
 

@@ -137,6 +137,10 @@
 			isa = PBXBuildFile;
 			fileRef = C58B70D3F916BCADB761FD29;
 		};
+		1E9BF34CF99EC925C2DD5E7A = {
+			isa = PBXBuildFile;
+			fileRef = 8137A042124ABD8EBF9F56C7;
+		};
 		DF42831B1CB357ECA786BF40 = {
 			isa = PBXBuildFile;
 			fileRef = E12A2B2781CF1250742A51EE;
@@ -367,6 +371,13 @@
 			path = "Govers_A2.entitlements";
 			sourceTree = "SOURCE_ROOT";
 		};
+		8137A042124ABD8EBF9F56C7 = {
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			name = "include_juce_dsp.mm";
+			path = "../../JuceLibraryCode/include_juce_dsp.mm";
+			sourceTree = "SOURCE_ROOT";
+		};
 		83E980DECF293FC872547982 = {
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.cpp.objcpp;
@@ -387,6 +398,13 @@
 			name = "include_juce_audio_devices.mm";
 			path = "../../JuceLibraryCode/include_juce_audio_devices.mm";
 			sourceTree = "SOURCE_ROOT";
+		};
+		8BEE0FC92E001B54DF9A9090 = {
+			isa = PBXFileReference;
+			lastKnownFileType = file;
+			name = "juce_dsp";
+			path = "/Users/taylor/Desktop/Massey/Yr3_Massey/Sem1/Software_2/sdk/JUCE/modules/juce_dsp";
+			sourceTree = "<absolute>";
 		};
 		A002706057D49E95F94936F8 = {
 			isa = PBXFileReference;
@@ -601,6 +619,7 @@
 				3AD5AE7214DCDE12E60833E6,
 				20A6DDA53E42FBF2CD940E9F,
 				CA2116333D534A0FE53BA03A,
+				8BEE0FC92E001B54DF9A9090,
 				0FBF12599EAEE5048EF91AB2,
 				C2BB5D52F34A1798A86E162E,
 				BB66222E194CD84A411C7A04,
@@ -628,6 +647,7 @@
 				EC60787A056BE75AD10104DA,
 				2AA7D3C9B5818221F09586D0,
 				C58B70D3F916BCADB761FD29,
+				8137A042124ABD8EBF9F56C7,
 				E12A2B2781CF1250742A51EE,
 				D3FB673BB273D64A77F44E6D,
 				E1368AA76AE677E6772E1F4F,
@@ -1294,6 +1314,7 @@
 				2F984B79D58019B1086844C5,
 				41BA2DE1779C904E6CC0FF1A,
 				E58093AE46F92B552D9B08E8,
+				1E9BF34CF99EC925C2DD5E7A,
 				DF42831B1CB357ECA786BF40,
 				4E0516B3F404BD1798113ACC,
 				EFFD449101714ED489D69974,
